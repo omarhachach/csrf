@@ -1,4 +1,4 @@
-package csrf
+package main
 
 import (
 	"crypto/rand"
@@ -7,12 +7,23 @@ import (
 	"io"
 )
 
-func GenerateUid(length int) string {
-	token := make([]byte, length)
-	rand.Read(token)
+/* EXAMPLE
+func main() {
+	const secret = "BpWgNVso4QWV4RDxSpuKqTOzIzrvbpqLz2Laj3ivCIE"
 
-	tokenString := base64.RawURLEncoding.EncodeToString(token)
-	return tokenString
+	for i := 0; i < 80; i++ {
+		salt := GenerateRandomString(8)
+		fmt.Println(GenerateToken(secret, salt))
+	}
+}
+*/
+
+func GenerateRandomString(length int) string {
+	random := make([]byte, length)
+	rand.Read(random)
+
+	randomString := base64.RawURLEncoding.EncodeToString(random)
+	return randomString
 }
 
 func GenerateToken(secret, salt string) string {
