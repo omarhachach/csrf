@@ -2,23 +2,22 @@ package main
 
 import (
 	"crypto/rand"
-	"crypto/sha1"
+	"crypto/sha256"
 	"encoding/base64"
 	"io"
 )
 
 /* EXAMPLE
 func main() {
-	const secret = "BpWgNVso4QWV4RDxSpuKqTOzIzrvbpqLz2Laj3ivCIE"
+	secret := GenerateRandom(32)
 
 	for i := 0; i < 80; i++ {
-		salt := GenerateRandomString(8)
-		fmt.Println(GenerateToken(secret, salt))
+		salt := GenerateRandom(16)
+		GenerateToken(secret, salt)
 	}
-}
-*/
+}*/
 
-func GenerateRandomString(length int) string {
+func GenerateRandom(length int) string {
 	random := make([]byte, length)
 	rand.Read(random)
 
@@ -31,7 +30,7 @@ func GenerateToken(secret, salt string) string {
 }
 
 func hash(str string) string {
-	hash := sha1.New()
+	hash := sha256.New()
 	io.WriteString(hash, str)
 
 	hashedString := base64.RawURLEncoding.EncodeToString(hash.Sum(nil))
