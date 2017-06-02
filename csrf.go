@@ -1,4 +1,4 @@
-package main
+package csrf
 
 import (
 	"crypto/rand"
@@ -17,8 +17,8 @@ func main() {
 	}
 }*/
 
-func GenerateRandom(length int) string {
-	random := make([]byte, length)
+func GenerateRandom(len int) string {
+	random := make([]byte, len)
 	rand.Read(random)
 
 	randomString := base64.RawURLEncoding.EncodeToString(random)
@@ -26,7 +26,7 @@ func GenerateRandom(length int) string {
 }
 
 func GenerateToken(secret, salt string) string {
-	return salt + "-" + hash(salt+"-"+secret)
+	return salt + hash(salt+"-"+secret)
 }
 
 func hash(str string) string {
@@ -35,4 +35,9 @@ func hash(str string) string {
 
 	hashedString := base64.RawURLEncoding.EncodeToString(hash.Sum(nil))
 	return hashedString
+}
+
+func Verify(token, secret string, saltLen int) bool {
+	salt := token[0:saltLen]
+	return salt+hash(salt+"-"+secret) == token
 }
