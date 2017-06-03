@@ -7,26 +7,35 @@ import (
 	"io"
 )
 
-/* EXAMPLE
-func main() {
-	secret := GenerateRandom(32)
+const (
+	chars   = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890"
+	idxBits = 6
+	idxMask = 1<<idxBits - 1
+)
 
-	for i := 0; i < 80; i++ {
-		salt := GenerateRandom(16)
-		GenerateToken(secret, salt)
+func GenerateRandom(length int) string {
+	result := make([]byte, length)
+	bufferSize := int(float64(length) * 1.3)
+	for i, j, randomBytes := 0, 0, []byte{}; i < length; j++ {
+		if j%bufferSize == 0 {
+			randomBytes = secureRandomBytes(bufferSize)
+		}
+		if idx := int(randomBytes[j%length] & idxMask); idx < len(chars) {
+			result[i] = chars[idx]
+			i++
+		}
 	}
-}*/
 
-func GenerateRandom(len int) string {
-	random := make([]byte, len)
-	rand.Read(random)
-
-	randomString := base64.RawURLEncoding.EncodeToString(random)
-	return randomString
+	return string(result)
 }
 
 func GenerateToken(secret, salt string) string {
 	return salt + hash(salt+"-"+secret)
+}
+
+func Verify(token, secret string, saltLen int) bool {
+	salt := token[0:saltLen]
+	return salt+hash(salt+"-"+secret) == token
 }
 
 func hash(str string) string {
@@ -37,7 +46,8 @@ func hash(str string) string {
 	return hashedString
 }
 
-func Verify(token, secret string, saltLen int) bool {
-	salt := token[0:saltLen]
-	return salt+hash(salt+"-"+secret) == token
+func secureRandomBytes(length int) []byte {
+	var randomBytes = make([]byte, length)
+	rand.Read(randomBytes)
+	return randomBytes
 }
