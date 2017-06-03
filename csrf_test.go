@@ -16,36 +16,44 @@ func contains(s []string, e string) bool {
 	return false
 }
 
-func TestGenerateRandom(t *testing.T) {
+func TestToolset_GenerateSalt(t *testing.T) {
 	tests := []struct {
-		len int
+		saltLen int
 	}{
 		{
-			8,
+			saltLen: 8,
 		},
 		{
-			16,
+			saltLen: 16,
 		},
 		{
-			32,
+			saltLen: 32,
 		},
 	}
 
 	var generated []string
 	for i, test := range tests {
+		toolset := New(Options{
+			Secret:  secret,
+			SaltLen: test.saltLen,
+		})
 		errorPrefix := fmt.Sprintf("Test [%d]: ", i)
-		actual := GenerateRandom(test.len)
+		actual := toolset.GenerateSalt()
 		if contains(generated, actual) {
 			t.Errorf(errorPrefix + "Generation isn't random!")
 		}
 		generated = append(generated, actual)
-		if len(actual) != test.len {
-			t.Errorf(errorPrefix+"Expected string length of %d, got %d", test.len, len(actual))
+		if len(actual) != test.saltLen {
+			t.Errorf(errorPrefix+"Expected string length of %d, got %d", test.saltLen, len(actual))
 		}
 	}
 }
 
-func TestGenerateToken(t *testing.T) {
+func TestToolset_GenerateToken(t *testing.T) {
+	toolset := New(Options{
+		Secret:  secret,
+		SaltLen: 16,
+	})
 	tests := []struct {
 		salt     string
 		expected string
@@ -66,14 +74,14 @@ func TestGenerateToken(t *testing.T) {
 
 	for i, test := range tests {
 		errorPrefix := fmt.Sprintf("Test [%d]: ", i)
-		actual := GenerateToken(secret, test.salt)
+		actual := toolset.GenerateToken(test.salt)
 		if actual != test.expected {
 			t.Errorf(errorPrefix+"Expected %b, got %b", test.expected, actual)
 		}
 	}
 }
 
-func TestVerify(t *testing.T) {
+func TestToolset_Verify(t *testing.T) {
 	tests := []struct {
 		saltLen  int
 		token    string
@@ -97,8 +105,12 @@ func TestVerify(t *testing.T) {
 	}
 
 	for i, test := range tests {
+		toolset := New(Options{
+			Secret:  secret,
+			SaltLen: test.saltLen,
+		})
 		errorPrefix := fmt.Sprintf("Test [%d]: ", i)
-		actual := Verify(test.token, secret, test.saltLen)
+		actual := toolset.Verify(test.token)
 		if actual != test.expected {
 			t.Errorf(errorPrefix+"Expected %d, got %d", test.expected, actual)
 		}

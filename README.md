@@ -13,5 +13,37 @@ Inspired by [pillarjs/csrf](https://github.com/pillarjs/csrf). Read [Understandi
 $ go get -u github.com/omar-h/csrf
 ```
 
+## Example
+This is an example of how to initiliaze and use the package:
+```Go
+package main
+
+import (
+        "fmt"
+        
+        "github.com/omar-h/csrf"
+)
+
+func main() {
+        const secret = "erHUnxuhBMRIsVB1LfqmiWCgB83ZEerH"
+        CSRF := csrf.New(csrf.Options{
+                // Secret should persist over program restart
+                Secret: secret,
+                SaltLen: 16,
+        })
+        
+        salt := CSRF.GenerateSalt()
+        token := CSRF.GenerateToken(salt)
+        
+        // Print the secret and a random salt and the token generated from them.
+        fmt.Println("Secret: ", secret)
+        fmt.Println("Salt: ", salt)
+        fmt.Println("Token: ", token)
+        
+        // Returns true
+        CSRF.Verify(token)
+}
+```
+
 ## License
 CSRF is licensed under the [MIT License](https://github.com/omar-h/csrf/blob/master/LICENSE.txt).

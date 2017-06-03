@@ -8,21 +8,31 @@ import (
 	"io"
 )
 
+type Toolset struct {
+	secret  string
+	saltLen int
+}
+
+type Options struct {
+	Secret  string
+	SaltLen int
+}
+
 const (
 	chars   = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890"
 	idxBits = 6
 	idxMask = 1<<idxBits - 1
 )
 
-// GenerateRandom generates a random string of specified length.
-func GenerateRandom(length int) string {
-	result := make([]byte, length)
-	bufferSize := int(float64(length) * 1.3)
-	for i, j, randomBytes := 0, 0, []byte{}; i < length; j++ {
+// GenerateSalt generates a random string of specified length.
+func (f *Toolset) GenerateSalt() string {
+	result := make([]byte, f.saltLen)
+	bufferSize := int(float64(f.saltLen) * 1.3)
+	for i, j, randomBytes := 0, 0, []byte{}; i < f.saltLen; j++ {
 		if j%bufferSize == 0 {
 			randomBytes = secureRandomBytes(bufferSize)
 		}
-		if idx := int(randomBytes[j%length] & idxMask); idx < len(chars) {
+		if idx := int(randomBytes[j%f.saltLen] & idxMask); idx < len(chars) {
 			result[i] = chars[idx]
 			i++
 		}
@@ -32,15 +42,24 @@ func GenerateRandom(length int) string {
 }
 
 // GenerateToken generates a secure token from a secret and salt.
-func GenerateToken(secret, salt string) string {
-	return salt + hash(salt+"-"+secret)
+func (f *Toolset) GenerateToken(salt string) string {
+	return salt + hash(salt+"-"+f.secret)
 }
 
 // Verify verifies if a token is valid.
 // It takes in the salt length and secret used to create the token.
-func Verify(token, secret string, saltLen int) bool {
-	salt := token[0:saltLen]
-	return salt+hash(salt+"-"+secret) == token
+func (f *Toolset) Verify(token string) bool {
+	salt := token[0:f.saltLen]
+	return salt+hash(salt+"-"+f.secret) == token
+}
+
+// New returns a new Toolset, it takes in a type Options.
+// The toolset will use the options.
+func New(opt Options) *Toolset {
+	return &Toolset{
+		secret:  opt.Secret,
+		saltLen: opt.SaltLen,
+	}
 }
 
 // hash hashes a string using sha256 and returns a
