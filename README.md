@@ -28,7 +28,7 @@ import (
 
 func main() {
         const secret = "erHUnxuhBMRIsVB1LfqmiWCgB83ZEerH"
-        CSRF := csrf.New(csrf.Options{
+        CSRF := csrf.New(csrf.Config{
                 // Secret should persist over program restart.
                 Secret: secret,
                 SaltLen: 16,

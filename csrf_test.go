@@ -33,7 +33,7 @@ func TestToolset_GenerateSalt(t *testing.T) {
 
 	var generated []string
 	for i, test := range tests {
-		toolset := New(Options{
+		toolset := New(Config{
 			Secret:  secret,
 			SaltLen: test.saltLen,
 		})
@@ -50,7 +50,7 @@ func TestToolset_GenerateSalt(t *testing.T) {
 }
 
 func TestToolset_GenerateToken(t *testing.T) {
-	toolset := New(Options{
+	toolset := New(Config{
 		Secret:  secret,
 		SaltLen: 16,
 	})
@@ -105,7 +105,7 @@ func TestToolset_Verify(t *testing.T) {
 	}
 
 	for i, test := range tests {
-		toolset := New(Options{
+		toolset := New(Config{
 			Secret:  secret,
 			SaltLen: test.saltLen,
 		})

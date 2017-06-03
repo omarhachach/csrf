@@ -8,12 +8,14 @@ import (
 	"io"
 )
 
+// Toolset holds the configuration and all the utility tools.
+// The utility tools use this to access the secret and saltLen.
 type Toolset struct {
-	secret  string
-	saltLen int
+	c Config
 }
 
-type Options struct {
+// Config is the configuration for the package and toolset.
+type Config struct {
 	Secret  string
 	SaltLen int
 }
@@ -26,13 +28,13 @@ const (
 
 // GenerateSalt generates a random string of specified length.
 func (f *Toolset) GenerateSalt() string {
-	result := make([]byte, f.saltLen)
-	bufferSize := int(float64(f.saltLen) * 1.3)
-	for i, j, randomBytes := 0, 0, []byte{}; i < f.saltLen; j++ {
+	result := make([]byte, f.c.SaltLen)
+	bufferSize := int(float64(f.c.SaltLen) * 1.3)
+	for i, j, randomBytes := 0, 0, []byte{}; i < f.c.SaltLen; j++ {
 		if j%bufferSize == 0 {
 			randomBytes = secureRandomBytes(bufferSize)
 		}
-		if idx := int(randomBytes[j%f.saltLen] & idxMask); idx < len(chars) {
+		if idx := int(randomBytes[j%f.c.SaltLen] & idxMask); idx < len(chars) {
 			result[i] = chars[idx]
 			i++
 		}
@@ -43,22 +45,21 @@ func (f *Toolset) GenerateSalt() string {
 
 // GenerateToken generates a secure token from a secret and salt.
 func (f *Toolset) GenerateToken(salt string) string {
-	return salt + hash(salt+"-"+f.secret)
+	return salt + hash(salt+"-"+f.c.Secret)
 }
 
 // Verify verifies if a token is valid.
 // It takes in the salt length and secret used to create the token.
 func (f *Toolset) Verify(token string) bool {
-	salt := token[0:f.saltLen]
-	return salt+hash(salt+"-"+f.secret) == token
+	salt := token[0:f.c.SaltLen]
+	return salt+hash(salt+"-"+f.c.Secret) == token
 }
 
 // New returns a new Toolset, it takes in a type Options.
 // The toolset will use the options.
-func New(opt Options) *Toolset {
+func New(c Config) *Toolset {
 	return &Toolset{
-		secret:  opt.Secret,
-		saltLen: opt.SaltLen,
+		c: c,
 	}
 }
 
