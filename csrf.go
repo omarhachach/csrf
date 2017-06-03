@@ -1,4 +1,4 @@
-// CSRF is a logic package for creating CSRF middleware.
+// Package csrf is a logic package for creating CSRF middleware.
 package csrf
 
 import (
@@ -37,7 +37,7 @@ func GenerateToken(secret, salt string) string {
 }
 
 // Verify verifies if a token is valid.
-// It takes in the salt length and secret used to create it.
+// It takes in the salt length and secret used to create the token.
 func Verify(token, secret string, saltLen int) bool {
 	salt := token[0:saltLen]
 	return salt+hash(salt+"-"+secret) == token
