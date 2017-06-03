@@ -27,7 +27,7 @@ import (
 func main() {
         const secret = "erHUnxuhBMRIsVB1LfqmiWCgB83ZEerH"
         CSRF := csrf.New(csrf.Options{
-                // Secret should persist over program restart
+                // Secret should persist over program restart.
                 Secret: secret,
                 SaltLen: 16,
         })
@@ -35,7 +35,7 @@ func main() {
         salt := CSRF.GenerateSalt()
         token := CSRF.GenerateToken(salt)
         
-        // Print the secret and a random salt and the token generated from them.
+        // Print the secret, a random salt and the token generated from them.
         fmt.Println("Secret: ", secret)
         fmt.Println("Salt: ", salt)
         fmt.Println("Token: ", token)
