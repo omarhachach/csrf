@@ -5,7 +5,7 @@ go:
   - 1.7.6
 
 before_script:
-  - gofmt github.com/omar-h/csrf
+  - go fmt github.com/omar-h/csrf
 
 script:
   - go test github.com/omar-h/csrf
