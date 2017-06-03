@@ -1,3 +1,4 @@
+// CSRF is a logic package for creating CSRF middleware.
 package csrf
 
 import (
