@@ -1,6 +1,6 @@
 ## CSRF - A toolset for CSRF middleware
 [![Travis branch](https://img.shields.io/travis/omar-h/csrf/master.svg?style=flat-square)](https://travis-ci.org/omar-h/csrf)
-![GitHub tag](https://img.shields.io/github/release/omar-h/csrf.svg?style=flat-square)
+[![GitHub tag](https://img.shields.io/github/release/omar-h/csrf.svg?style=flat-square)](https://github.com/omar-h/csrf/releases)
 [![Report Card](https://img.shields.io/badge/report%20card-a%2B-c0392b.svg?style=flat-square)](https://goreportcard.com/report/github.com/omar-h/csrf)
 ![Powered By](https://img.shields.io/badge/powered%20by-go-blue.svg?style=flat-square)
 [![Docs](https://img.shields.io/badge/docs-reference-9b59b6.svg?style=flat-square)](https://godoc.org/github.com/omar-h/csrf)
